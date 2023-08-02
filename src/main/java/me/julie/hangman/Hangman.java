@@ -33,7 +33,8 @@ public class Hangman {
                 return;
         }
 
-        final Scanner fileScanner = new Scanner(Objects.requireNonNull(Hangman.class.getClassLoader().getResourceAsStream(fileName)));
+        final Scanner fileScanner = new Scanner(Objects.requireNonNull(
+                Hangman.class.getClassLoader().getResourceAsStream(fileName)));
         ArrayList<String> words = new ArrayList<>();
         while (fileScanner.hasNext()) {
             words.add(fileScanner.nextLine());
