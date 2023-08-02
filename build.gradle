@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+}
+
+group 'me.julie'
+version '1.0-SNAPSHOT'
+
+mainClassName = 'me.julie.hangman.Hangman'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
