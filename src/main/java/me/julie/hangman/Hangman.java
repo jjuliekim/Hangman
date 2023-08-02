@@ -4,33 +4,41 @@ import java.util.*;
 
 public class Hangman {
     public static void main(String[] args) {
-        System.out.println("""
+        final Scanner scanner = new Scanner(System.in);
+        System.out.print("""
 
                 Let's play Hangman!
-                Pick a category:
+                Categories:
                 [1] 50 States
                 [2] Animals
-                [3] Random Words""");
-        final Scanner scanner = new Scanner(System.in);
-        String choice = scanner.nextLine();
-        String fileName;
-        String category;
-        switch (choice) {
-            case "1":
+                [3] Random Words
+                Pick a category:\s""");
+        String input = scanner.nextLine();
+        while (Integer.parseInt(input) < 1 || Integer.parseInt(input) > 3) {
+            System.err.println("Invalid input!");
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.print("Pick a category [1-3]: ");
+            input = scanner.nextLine();
+        }
+        String fileName = "";
+        String category = "";
+        switch (input) {
+            case "1" -> {
                 fileName = "states.txt";
                 category = "50 States";
-                break;
-            case "2":
+            }
+            case "2" -> {
                 fileName = "animals.txt";
                 category = "Animals";
-                break;
-            case "3":
+            }
+            case "3" -> {
                 fileName = "random.txt";
                 category = "Random Words";
-                break;
-            default:
-                System.err.println("Choose a category.");
-                return;
+            }
         }
 
         final Scanner fileScanner = new Scanner(Objects.requireNonNull(
@@ -39,28 +47,25 @@ public class Hangman {
         while (fileScanner.hasNext()) {
             words.add(fileScanner.nextLine());
         }
-
         Random random = new Random();
         int num = random.nextInt(words.size());
         String answer = words.get(num).toLowerCase();
         char[] answerLetters = answer.toCharArray(); // answer to char array
         char[] inputs = new char[answerLetters.length]; // empty array for user's answer inputs
 
-        System.out.println("[Category: " + category + "] \nInput one letter at a time!");
+        System.out.println("\n[Category: " + category + "] \nInput one letter at a time!");
         printCurrentLetters(inputs);
         HashSet<Character> incorrect = new HashSet<>(); // no duplicates
 
         while (!Arrays.equals(inputs, answerLetters) && incorrect.size() != 7) {
             char guess = Character.toLowerCase(scanner.nextLine().toCharArray()[0]);
-            for (int i = 0; i < inputs.length; i++) { // updating inputs array with correct guess
+            for (int i = 0; i < inputs.length; i++) { // updating inputs array with correct guesses
                 if (guess == answerLetters[i]) {
                     inputs[i] = guess;
                 }
             }
 
-            if (answer.contains(String.valueOf(guess))) {
-                System.out.println("Correct!");
-            } else {
+            if (!answer.contains(String.valueOf(guess))) {
                 incorrect.add(guess);
             }
 
@@ -68,24 +73,26 @@ public class Hangman {
             printCurrentLetters(inputs);
 
             ArrayList<Character> incorrectList = new ArrayList<>(incorrect);
-            if (incorrectList.size() == 0) {
+            if (incorrectList.isEmpty()) {
                 System.out.println("Incorrect letters: none");
-                continue;
-            }
-            System.out.print("Incorrect letters: ");
-            for (int i = 0; i < incorrect.size(); i++) { // has incorrect numbers
-                System.out.print(incorrectList.get(i));
-                if (i < incorrectList.size() - 1) {
-                    System.out.print(" "); // space in between each letter
-                } else {
-                    System.out.println(); // new line
+            } else {
+                System.out.print("Incorrect letters: ");
+                for (int i = 0; i < incorrect.size(); i++) {
+                    System.out.print(incorrectList.get(i));
+                    if (i < incorrectList.size() - 1) {
+                        System.out.print(" "); // space in between each letter
+                    } else {
+                        System.out.println(); // new line
+                    }
                 }
             }
         }
+
+        // end result
         if (incorrect.size() < 7) {
             System.out.println("\nCongrats! You win!");
         } else {
-            System.out.println("\nGame over! The state was " + answer + "!");
+            System.out.println("\nGame over! The answer was " + answer + "!");
         }
     }
 
@@ -108,79 +115,78 @@ public class Hangman {
 
     private static void printHangman(int incorrect) {
         switch (incorrect) {
-            case 0: System.out.println(
-                    "  ┌─────┬\n" +
-                            "  │\n" +
-                            "  │\n" +
-                            "  │\n" +
-                            "  │\n" +
-                            "──┴──"
+            case 0 -> System.out.println(
+                    """
+                              ┌─────┬
+                              │
+                              │
+                              │
+                              │
+                            ──┴──"""
             );
-                break;
-            case 1: System.out.println(
-                    "  ┌─────┬\n" +
-                            "  │     ◯\n" +
-                            "  │\n" +
-                            "  │\n" +
-                            "  │\n" +
-                            "──┴──"
+            case 1 -> System.out.println(
+                    """
+                              ┌─────┬
+                              │     ◯
+                              │
+                              │
+                              │
+                            ──┴──"""
             );
-                break;
-            case 2: System.out.println(
-                    "  ┌─────┬\n" +
-                            "  │     ◯\n" +
-                            "  │     │\n" +
-                            "  │\n" +
-                            "  │\n" +
-                            "──┴──"
+            case 2 -> System.out.println(
+                    """
+                              ┌─────┬
+                              │     ◯
+                              │     │
+                              │
+                              │
+                            ──┴──"""
             );
-                break;
-            case 3: System.out.println(
-                    "  ┌─────┬\n" +
-                            "  │     ◯\n" +
-                            "  │    \\│\n" +
-                            "  │\n" +
-                            "  │\n" +
-                            "──┴──"
+            case 3 -> System.out.println(
+                    """
+                              ┌─────┬
+                              │     ◯
+                              │    \\│
+                              │
+                              │
+                            ──┴──"""
             );
-                break;
-            case 4: System.out.println(
-                    "  ┌─────┬\n" +
-                            "  │     ◯\n" +
-                            "  │    \\│/\n" +
-                            "  │\n" +
-                            "  │\n" +
-                            "──┴──"
+            case 4 -> System.out.println(
+                    """
+                              ┌─────┬
+                              │     ◯
+                              │    \\│/
+                              │
+                              │
+                            ──┴──"""
             );
-                break;
-            case 5: System.out.println(
-                    "  ┌─────┬\n" +
-                            "  │     ◯\n" +
-                            "  │    \\│/\n" +
-                            "  │     │\n" +
-                            "  │\n" +
-                            "──┴──"
+            case 5 -> System.out.println(
+                    """
+                              ┌─────┬
+                              │     ◯
+                              │    \\│/
+                              │     │
+                              │
+                            ──┴──"""
             );
-                break;
-            case 6: System.out.println(
-                    "  ┌─────┬\n" +
-                            "  │     ◯\n" +
-                            "  │    \\│/\n" +
-                            "  │     │\n" +
-                            "  │    /\n" +
-                            "──┴──"
+            case 6 -> System.out.println(
+                    """
+                              ┌─────┬
+                              │     ◯
+                              │    \\│/
+                              │     │
+                              │    /
+                            ──┴──"""
             );
-                break;
-            case 7: System.out.println(
-                    "  ┌─────┬\n" +
-                            "  │     ◯\n" +
-                            "  │    \\│/\n" +
-                            "  │     │\n" +
-                            "  │    / \\\n" +
-                            "──┴──"
+            case 7 -> System.out.println(
+                    """
+                              ┌─────┬
+                              │     ◯
+                              │    \\│/
+                              │     │
+                              │    / \\
+                            ──┴──"""
             );
-                break;
-
         }
     }
 }
